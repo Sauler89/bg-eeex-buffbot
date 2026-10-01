@@ -40,7 +40,7 @@ BfBot.Theme = BfBot.Theme or {}
 --   lockInactive — color when spell is unlocked
 -- ============================================================
 
--- Six palettes keyed as <accent>_<mode>.
+-- Eight palettes keyed as <accent>_<mode>.
 -- Each palette is flat; _T(key) reads from the active palette.
 BfBot.Theme._palettes = {
     bg2_light = {
@@ -186,6 +186,54 @@ BfBot.Theme._palettes = {
         lockInactive = "{150, 135, 115}",
         itemColor    = "{198, 142, 95}",
     },
+    -- IWD palette: reuses the steel-blue texture set while shifting the
+    -- semantic colors toward IWD's colder stone/ice interface.
+    iwd_light = {
+        overlay      = 85,
+        borderResref = "BFBOTFR2",
+        bgResref     = "BFBOTBG2",
+        title        = "{232, 238, 242}",
+        text         = "{220, 228, 234}",
+        textMuted    = "{145, 158, 168}",
+        textAccent   = "{145, 205, 235}",
+        grip         = "{180, 195, 205}",
+        reset        = "{205, 215, 220}",
+        headerSub    = "{180, 205, 220}",
+        lockText     = "{175, 190, 200}",
+        spellLocked  = "{210, 225, 235}",
+        pickerSel    = "{245, 245, 205}",
+        pickerOn     = "{225, 235, 240}",
+        pickerOff    = "{135, 150, 160}",
+        qcOff        = "{145, 160, 170}",
+        qcLong       = "{220, 210, 105}",
+        qcAll        = "{235, 135, 90}",
+        lockActive   = "{240, 225, 120}",
+        lockInactive = "{145, 160, 170}",
+        itemColor    = "{190, 145, 105}",
+    },
+    iwd_dark = {
+        overlay      = 195,
+        borderResref = "BFBOTFR2",
+        bgResref     = "BFBOTBG2",
+        title        = "{220, 232, 240}",
+        text         = "{205, 218, 226}",
+        textMuted    = "{125, 142, 152}",
+        textAccent   = "{125, 190, 225}",
+        grip         = "{165, 182, 195}",
+        reset        = "{185, 200, 210}",
+        headerSub    = "{160, 195, 215}",
+        lockText     = "{155, 175, 190}",
+        spellLocked  = "{190, 215, 230}",
+        pickerSel    = "{245, 240, 185}",
+        pickerOn     = "{210, 225, 235}",
+        pickerOff    = "{120, 138, 150}",
+        qcOff        = "{125, 145, 160}",
+        qcLong       = "{215, 205, 95}",
+        qcAll        = "{235, 120, 80}",
+        lockActive   = "{235, 220, 110}",
+        lockInactive = "{130, 145, 158}",
+        itemColor    = "{195, 140, 95}",
+    },
 }
 
 -- Active palette reference; defaults to bg2_light (pixel-match current behavior).
@@ -245,11 +293,32 @@ BfBot.Theme._fontSize = 2
 function BfBot.Theme._RegisterStyles()
     if not styles then return end
     if not EEex or not EEex.DeepCopy then return end
+    local isIWD = (type(rgGameEngine) == "number" and rgGameEngine == 3)
     for bbName, parent in pairs(BfBot.Theme._STYLE_PARENTS) do
-        if styles[parent] then
-            styles[bbName] = EEex.DeepCopy(styles[parent])
+        local useParent = parent
+        if isIWD and bbName == "bb_title" and styles.rg_trajan then
+            useParent = "rg_trajan"
+        end
+        if styles[useParent] then
+            styles[bbName] = EEex.DeepCopy(styles[useParent])
         end
     end
+
+    BfBot.Theme._FONT_TO_BASE_POINT = {}
+    for bbName, basePt in pairs(BfBot.Theme._BASE_POINTS) do
+        local style = styles[bbName]
+        local font = style and style.font
+        local fontName = nil
+        if type(font) == "string" then
+            fontName = font
+        elseif font ~= nil then
+            pcall(function() fontName = font:get() end)
+        end
+        if fontName and BfBot.Theme._FONT_TO_BASE_POINT[fontName] == nil then
+            BfBot.Theme._FONT_TO_BASE_POINT[fontName] = basePt
+        end
+    end
+
     BfBot.Theme._RefreshStyles()
 end
 
@@ -268,16 +337,10 @@ function BfBot.Theme._RefreshStyles()
     end
 end
 
--- Map IE font name → BuffBot's base point. Body/edit/cell styles use NORMAL,
--- bb_button inherits the engine's STONESML button font, and bb_title uses
--- REALMS. Engine items in OTHER menus aren't touched — iteration is scoped
--- to our owned menus. ITEM_BUTTON ignores the point update, but retaining its
--- mapping keeps this traversal harmless and makes that limitation explicit.
-BfBot.Theme._FONT_TO_BASE_POINT = {
-    NORMAL   = 12,  -- bb_normal, bb_normal_parchment, bb_edit
-    STONESML = 14,  -- bb_button (point ignored by ITEM_BUTTON renderer)
-    REALMS   = 18,  -- bb_title
-}
+-- Populated dynamically by _RegisterStyles() from the engine styles BuffBot
+-- actually inherits. This handles IWD/Infinity UI++ fonts such as
+-- RGFONT/RGTRAJ without hardcoding a BG2-only font map.
+BfBot.Theme._FONT_TO_BASE_POINT = {}
 
 -- Menus we own (defined in buffbot/BuffBot.menu). Iterated by name.
 BfBot.Theme._OWNED_MENUS = {
@@ -411,7 +474,10 @@ function BfBot.Theme._LoadFromINI()
     local name = BfBot.Persist.GetPref("Theme")
     -- Defensive coercion: if INI accessor returns a non-string for any reason,
     -- fall back to the default palette name.
-    if type(name) ~= "string" or name == "" then name = "bg2_light" end
+    if type(name) ~= "string" or name == "" then
+        name = (type(rgGameEngine) == "number" and rgGameEngine == 3)
+            and "iwd_light" or "bg2_light"
+    end
     local palette = BfBot.Theme._palettes[name]
     if palette then
         BfBot.Theme._active = palette
@@ -452,7 +518,7 @@ end
 -- Active palette decomposition (mode + accent helpers)
 -- ============================================================
 -- The active palette name is "<accent>_<mode>" where:
---   accent ∈ { bg2, sod, bg1 }
+--   accent ∈ { bg2, sod, bg1, iwd }
 --   mode   ∈ { light, dark }
 -- These helpers split that compound name so the EEex Options UI can
 -- expose the two axes (Dark Mode toggle + Color Scheme radio) without
@@ -470,7 +536,7 @@ function BfBot.Theme._IsDark()
     return 0
 end
 
---- Returns "bg2" / "sod" / "bg1" for the active palette's accent prefix.
+--- Returns "bg2" / "sod" / "bg1" / "iwd" for the active palette's accent prefix.
 -- Falls back to "bg2" if the active palette can't be located in the table
 -- (should never happen in practice — _active is always one of _palettes).
 function BfBot.Theme._GetAccentName()
@@ -491,16 +557,16 @@ function BfBot.Theme._SetDarkMode(dark)
     BfBot.Theme.Apply(accent .. suffix)
 end
 
---- Returns 1/2/3 for the active accent (BG2 / SOD / BG1).
+--- Returns 1/2/3/4 for the active accent (BG2 / SOD / BG1 / IWD).
 function BfBot.Theme._GetAccentIndex()
     local accent = BfBot.Theme._GetAccentName()
-    return ({bg2=1, sod=2, bg1=3})[accent] or 1
+    return ({bg2=1, sod=2, bg1=3, iwd=4})[accent] or 1
 end
 
---- Set the accent by index (1=BG2, 2=SOD, 3=BG1) preserving dark/light.
+--- Set the accent by index (1=BG2, 2=SOD, 3=BG1, 4=IWD) preserving dark/light.
 -- Out-of-range / non-numeric input falls back to BG2.
 function BfBot.Theme._SetAccent(idx)
-    local accent = ({[1]="bg2", [2]="sod", [3]="bg1"})[idx] or "bg2"
+    local accent = ({[1]="bg2", [2]="sod", [3]="bg1", [4]="iwd"})[idx] or "bg2"
     local suffix = (BfBot.Theme._IsDark() == 1) and "_dark" or "_light"
     BfBot.Theme.Apply(accent .. suffix)
 end
@@ -539,6 +605,7 @@ local function _populateUiStrings()
     uiStrings.BuffBot_Accent_BG2 = BfBot.L10N.Get("options.color_scheme_bg2")
     uiStrings.BuffBot_Accent_SOD = BfBot.L10N.Get("options.color_scheme_sod")
     uiStrings.BuffBot_Accent_BG1 = BfBot.L10N.Get("options.color_scheme_bg1")
+    uiStrings.BuffBot_Accent_IWD = BfBot.L10N.Get("options.color_scheme_iwd")
     uiStrings.BuffBot_TextSize = BfBot.L10N.Get("options.text_size")
     uiStrings.BuffBot_TextSize_Desc = BfBot.L10N.Get("options.text_size_description")
     uiStrings.BuffBot_TextSize_Small = BfBot.L10N.Get("options.text_size_small")
@@ -603,7 +670,7 @@ function BfBot.Theme._RegisterOptionsTab()
         ["storage"]  = DarkBridge.new(),
     }))
 
-    -- Color Scheme (3-way radio: 1=BG2, 2=SOD, 3=BG1)
+    -- Color Scheme (4-way radio: 1=BG2, 2=SOD, 3=BG1, 4=IWD)
     local AccentBridge = _makeBridgeStorage(
         function() return BfBot.Theme._GetAccentIndex() end,
         function(v) BfBot.Theme._SetAccent(v) end
@@ -611,7 +678,7 @@ function BfBot.Theme._RegisterOptionsTab()
     EEex_Options_Register("BuffBot_Accent", EEex_Options_Option.new({
         ["default"]  = 1,
         ["type"]     = EEex_Options_ToggleType.new(),
-        ["accessor"] = EEex_Options_ClampedAccessor.new({ ["min"] = 1, ["max"] = 3 }),
+        ["accessor"] = EEex_Options_ClampedAccessor.new({ ["min"] = 1, ["max"] = 4 }),
         ["storage"]  = AccentBridge.new(),
     }))
 
@@ -663,6 +730,15 @@ function BfBot.Theme._RegisterOptionsTab()
                 ["disallowToggleOff"] = true,
             }),
         }),
+        EEex_Options_DisplayEntry.new({
+            ["optionID"]    = "BuffBot_Accent",
+            ["label"]       = "BuffBot_Accent_IWD",
+            ["description"] = "BuffBot_Accent_Desc",
+            ["widget"]      = EEex_Options_ToggleWidget.new({
+                ["toggleValue"]       = 4,
+                ["disallowToggleOff"] = true,
+            }),
+        }),
     }
     local sizeEntries = {
         EEex_Options_DisplayEntry.new({
@@ -705,7 +781,7 @@ function BfBot.Theme._RegisterOptionsTab()
                 ["widget"]      = EEex_Options_ToggleWidget.new(),
             }),
         },
-        -- Group 2: Color Scheme (3 toggles sharing BuffBot_Accent option)
+        -- Group 2: Color Scheme (4 toggles sharing BuffBot_Accent option)
         accentEntries,
         -- Group 3: Text Size (3 toggles sharing BuffBot_TextSize option)
         sizeEntries,

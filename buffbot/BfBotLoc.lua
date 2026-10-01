@@ -149,7 +149,7 @@ local _registry = {
     ["options.dark_mode"] = { id = 701, fallback = [=[Dark Mode]=] },
     ["options.dark_mode_description"] = { id = 702, fallback = [=[Dim the panel parchment for low-light play. The accent palette is preserved.]=] },
     ["options.color_scheme"] = { id = 703, fallback = [=[Color Scheme]=] },
-    ["options.color_scheme_description"] = { id = 704, fallback = [=[Choose the panel accent palette: classic BG2 parchment, the steel-blue Siege of Dragonspear, or the warm BG1 amber.]=] },
+    ["options.color_scheme_description"] = { id = 704, fallback = [=[Choose the panel accent palette.]=] },
     ["options.color_scheme_bg2"] = { id = 705, fallback = [=[Baldur's Gate 2]=] },
     ["options.color_scheme_sod"] = { id = 706, fallback = [=[Siege of Dragonspear]=] },
     ["options.color_scheme_bg1"] = { id = 707, fallback = [=[Baldur's Gate 1]=] },
@@ -158,6 +158,7 @@ local _registry = {
     ["options.text_size_small"] = { id = 710, fallback = [=[Small]=] },
     ["options.text_size_medium"] = { id = 711, fallback = [=[Medium]=] },
     ["options.text_size_large"] = { id = 712, fallback = [=[Large]=] },
+    ["options.color_scheme_iwd"] = { id = 713, fallback = [=[Icewind Dale]=] },
 }
 
 local _registryById = {}

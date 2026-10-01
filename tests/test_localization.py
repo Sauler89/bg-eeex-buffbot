@@ -227,7 +227,7 @@ CATALOG_SCHEMA = {
     600: "default.preset.long",
     601: "default.preset.short",
     602: "default.preset.indexed",
-    # EEex Options strings: exactly thirteen (700-712)
+    # EEex Options strings: exactly fourteen (700-713)
     700: "options.tab",
     701: "options.dark_mode",
     702: "options.dark_mode_description",
@@ -241,6 +241,7 @@ CATALOG_SCHEMA = {
     710: "options.text_size_small",
     711: "options.text_size_medium",
     712: "options.text_size_large",
+    713: "options.color_scheme_iwd",
 }
 
 
@@ -1150,7 +1151,7 @@ def test_menu_localization_does_not_change_actions_layout_or_list_structure():
     ) + "\n"
     # Includes the zero-area label that drains deferred 5E spell-list updates.
     assert hashlib.sha256(normalized.encode("utf-8")).hexdigest() == (
-        "ad7f0022e20224d820601f4772fea7b4cec9ce47be6536c78bf91cdf9a6e6a0d"
+        "478638b24b23498792cdfc78c4a4d523067f603b67de5b6a8f1106911282e074"
     )
 
 
@@ -1248,10 +1249,10 @@ def test_known_player_display_sinks_use_localization_not_raw_reason_codes():
     assert 'return false, "already running"' not in execution
 
 
-def test_all_thirteen_eeex_options_strings_come_from_runtime_localization():
+def test_all_fourteen_eeex_options_strings_come_from_runtime_localization():
     source = THEME_PATH.read_text(encoding="utf-8")
     expected = {
-        CATALOG_SCHEMA[catalog_id] for catalog_id in range(700, 713)
+        CATALOG_SCHEMA[catalog_id] for catalog_id in range(700, 714)
     }
     assignments = re.findall(
         r"uiStrings\.[A-Za-z0-9_]+\s*=\s*"
@@ -1259,7 +1260,7 @@ def test_all_thirteen_eeex_options_strings_come_from_runtime_localization():
         source,
     )
     actual = set(assignments)
-    assert len(assignments) == 13
+    assert len(assignments) == 14
     assert actual == expected
 
 
@@ -1277,3 +1278,8 @@ def test_per_frame_menu_text_helpers_use_precomputed_or_cached_templates():
         assert "BfBot.L10N.Format" not in body, (
             f"{helper} is evaluated every frame; precompute or cache its template"
         )
+
+def test_all_installer_game_requirements_name_iwdee() -> None:
+    for catalog_path in sorted((ROOT / "buffbot/lang").glob("*/setup.tra")):
+        catalog, _ = parse_tra(catalog_path)
+        assert "IWD:EE" in catalog[101], catalog_path

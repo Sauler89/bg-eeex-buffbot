@@ -1,7 +1,7 @@
 // installer.component.luajit
 @100 = ~BuffBot：EEex LuaJIT 支持（自动检测）~
 // installer.require.game
-@101 = ~BuffBot 需要 BG:EE、BG2:EE 或 EET。~
+@101 = ~BuffBot 需要 BG:EE、BG2:EE、IWD:EE 或 EET。~
 // installer.require.eeex
 @102 = ~BuffBot 需要 EEex v0.11.0-alpha 或更高版本。请先安装 EEex：https://github.com/Bubb13/EEex/releases~
 // installer.luajit.already_active
@@ -341,7 +341,7 @@
 // options.color_scheme
 @703 = ~配色方案~
 // options.color_scheme_description
-@704 = ~选择面板强调色：经典的《博德之门 2》羊皮纸、钢蓝色的《龙矛围攻》，或暖琥珀色的《博德之门 1》。~
+@704 = ~选择面板的配色方案。~
 // options.color_scheme_bg2
 @705 = ~博德之门 2~
 // options.color_scheme_sod
@@ -358,3 +358,5 @@
 @711 = ~中~
 // options.text_size_large
 @712 = ~大~
+// options.color_scheme_iwd
+@713 = ~冰风谷~

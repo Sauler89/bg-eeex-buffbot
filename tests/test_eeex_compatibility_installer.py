@@ -2137,3 +2137,9 @@ def test_main_component_uninstall_leaves_stable_tlk_residue_and_reuses_it(
     _assert_installed(game, second_install)
     assert game.lang_tlk.read_bytes() == first_tlk
     _assert_english_innate_catalog_in_tlk(game.lang_tlk)
+
+def test_installer_accepts_iwdee_for_helper_and_main() -> None:
+    source = (ROOT / "buffbot/setup-buffbot.tp2").read_text(encoding="utf-8")
+    predicate = "REQUIRE_PREDICATE (GAME_IS ~bgee bg2ee eet iwdee~)"
+
+    assert source.count(predicate) == 2

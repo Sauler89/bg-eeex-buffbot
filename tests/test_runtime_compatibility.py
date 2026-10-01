@@ -4320,3 +4320,17 @@ def test_export_contains_error_objects_whose_tostring_throws(
 
     assert facts["contained"]
     assert facts["empty"]
+
+def test_iwdee_infinity_ui_skin_uses_native_button_sheet_and_bg_fallback() -> None:
+    ui = (ROOT / "buffbot/BfBotUI.lua").read_text(encoding="utf-8")
+    menu = (ROOT / "buffbot/BuffBot.menu").read_text(encoding="utf-8")
+    theme = (ROOT / "buffbot/BfBotThm.lua").read_text(encoding="utf-8")
+
+    assert 'rgGameEngine == 3' in ui
+    assert '"RGDBUTS3"' in ui
+    assert '"GUIOSTUL"' in ui
+    assert 'bam lua "BfBot.UI._ButtonBam()"' in menu
+    assert 'sequence lua "BfBot.UI._ButtonSequence()"' in menu
+    assert 'iwd_light = {' in theme
+    assert 'iwd_dark = {' in theme
+    assert '"BuffBot_Accent_IWD"' in theme

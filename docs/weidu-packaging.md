@@ -254,12 +254,12 @@ end
 
 ---
 
-## 4. Cross-Game Support (BG:EE / BG2:EE / EET)
+## 4. Cross-Game Support (BG:EE / BG2:EE / IWD:EE / EET)
 
 ### 4.1 Game Detection **[DOC]**
 
 ```
-REQUIRE_PREDICATE (GAME_IS ~bgee bg2ee eet~) @0
+REQUIRE_PREDICATE (GAME_IS ~bgee bg2ee eet iwdee~) @0
 ```
 
 BuffBot targets three game configurations:
@@ -268,6 +268,7 @@ BuffBot targets three game configurations:
 |-------|------|-------|
 | `bgee` | Baldur's Gate: Enhanced Edition | Includes SoD if installed |
 | `bg2ee` | Baldur's Gate II: Enhanced Edition | |
+| `iwdee` | Icewind Dale: Enhanced Edition | Uses the same EE engine family and EEex runtime APIs required by BuffBot |
 | `eet` | Enhanced Edition Trilogy | BG1 + SoD + BG2 merged; uses BG2:EE engine |
 
 BuffBot does not target IWD:EE (unlike BSME, which does). The spell systems differ
@@ -404,7 +405,7 @@ works.
 // BuffBot — In-Game Configurable Buff Automation
 // ==========================================================================
 // Requires: EEex (https://github.com/Bubb13/EEex)
-// Games:    BG:EE, BG2:EE, EET
+// Games:    BG:EE, BG2:EE, IWD:EE, EET
 
 BACKUP ~weidu_external/backup/buffbot~
 AUTHOR ~[author]~
@@ -432,7 +433,7 @@ LABEL ~BuffBot-Main~
 
 // --- Prerequisites ---
 
-REQUIRE_PREDICATE (GAME_IS ~bgee bg2ee eet~) @1
+REQUIRE_PREDICATE (GAME_IS ~bgee bg2ee eet iwdee~) @1
 
 REQUIRE_PREDICATE
   (MOD_IS_INSTALLED ~EEex.tp2~ (ID_OF_LABEL ~EEex.tp2~ ~B3-EEex-Main~))
@@ -492,7 +493,7 @@ COPY ~%bam_folder%~ ~override~
 @0  = ~BuffBot: In-Game Buff Automation~
 
 // Error messages
-@1  = ~BuffBot requires Baldur's Gate: Enhanced Edition (BG:EE, BG2:EE, or EET).~
+@1  = ~BuffBot requires BG:EE, BG2:EE, IWD:EE, or EET.~
 @2  = ~BuffBot requires EEex to be installed. Please install EEex first: https://github.com/Bubb13/EEex~
 
 // UI strings (substituted into BfBotWei.lua and BuffBot.menu via EVALUATE_BUFFER)
@@ -588,7 +589,7 @@ Key WeiDU constructs used in the starter tp2, for reference:
 | `DESIGNATED` | Explicit component number | `DESIGNATED 0` |
 | `LABEL` | Human-readable component ID | `LABEL ~BuffBot-Main~` |
 | `REQUIRE_PREDICATE` | Skip component if condition is false | Game check, dependency check |
-| `GAME_IS` | Test which game is running | `GAME_IS ~bgee bg2ee eet~` |
+| `GAME_IS` | Test which game is running | `GAME_IS ~bgee bg2ee eet iwdee~` |
 | `MOD_IS_INSTALLED` | Test if another mod's component is installed | `MOD_IS_INSTALLED ~EEex.tp2~ ~0~` |
 | `ID_OF_LABEL` | Look up component number by label | `ID_OF_LABEL ~EEex.tp2~ ~B3-EEex-Main~` |
 | `ACTION_IF` / `ELSE` | Conditional logic at install time | UI framework detection |

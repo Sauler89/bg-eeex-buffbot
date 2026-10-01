@@ -389,6 +389,38 @@ buffbot_variantTitle = ""          -- complete localized variant-picker title
 buffbot_variantSelected = 0        -- selected row in variant picker
 
 -- ============================================================
+-- Game/UI skin compatibility
+-- ============================================================
+
+--- True when running IWD:EE through the Rg/Infinity UI++ skin used by the
+--- game's current UI.MENU. BuffBot otherwise keeps its legacy BG button art.
+function BfBot.UI._UseIWDRgSkin()
+    if BfBot.UI._iwdRgSkin ~= nil then return BfBot.UI._iwdRgSkin end
+    local isIWD = (type(rgGameEngine) == "number" and rgGameEngine == 3)
+    local hasSkin = (type(RgUISkin) == "number")
+    local hasButton = false
+    if isIWD and hasSkin and EEex_Resource_Demand then
+        local ok, res = pcall(EEex_Resource_Demand, "RGDBUTS3", "BAM")
+        hasButton = ok and res ~= nil
+    end
+    BfBot.UI._iwdRgSkin = isIWD and hasSkin and hasButton
+    return BfBot.UI._iwdRgSkin
+end
+
+--- Button art used by BuffBot.menu. RGDBUTS3 is the native IWD/Infinity UI++
+--- button sheet; GUIOSTUL remains the established BG fallback.
+function BfBot.UI._ButtonBam()
+    return BfBot.UI._UseIWDRgSkin() and "RGDBUTS3" or "GUIOSTUL"
+end
+
+--- IWD/Infinity UI++ stores visual variants as BAM sequences selected by
+--- RgUISkin. Legacy BG resources use sequence 0.
+function BfBot.UI._ButtonSequence()
+    if BfBot.UI._UseIWDRgSkin() then return tonumber(RgUISkin) or 0 end
+    return 0
+end
+
+-- ============================================================
 -- Stable Spell Selection
 -- ============================================================
 

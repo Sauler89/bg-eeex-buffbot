@@ -1,7 +1,7 @@
 // installer.component.luajit
 @100 = ~BuffBot : prise en charge d’EEex LuaJIT (détection automatique)~
 // installer.require.game
-@101 = ~BuffBot nécessite BG:EE, BG2:EE ou EET.~
+@101 = ~BuffBot nécessite BG:EE, BG2:EE, IWD:EE ou EET.~
 // installer.require.eeex
 @102 = ~BuffBot nécessite EEex v0.11.0-alpha ou une version ultérieure. Installez d’abord EEex : https://github.com/Bubb13/EEex/releases~
 // installer.luajit.already_active
@@ -341,7 +341,7 @@
 // options.color_scheme
 @703 = ~Jeu de couleurs~
 // options.color_scheme_description
-@704 = ~Choisissez la palette d’accentuation du panneau : parchemin classique de BG2, bleu acier de Siege of Dragonspear ou ambre chaud de BG1.~
+@704 = ~Choisissez la palette de couleurs du panneau.~
 // options.color_scheme_bg2
 @705 = ~Baldur's Gate 2~
 // options.color_scheme_sod
@@ -358,3 +358,5 @@
 @711 = ~Moyen~
 // options.text_size_large
 @712 = ~Grand~
+// options.color_scheme_iwd
+@713 = ~Icewind Dale~

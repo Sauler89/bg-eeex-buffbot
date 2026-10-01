@@ -1,6 +1,6 @@
 # BuffBot
 
-**In-game configurable buff automation for Baldur's Gate: Enhanced Edition.**
+**In-game configurable buff automation for Baldur's Gate and Icewind Dale Enhanced Editions.**
 
 Cast all your pre-battle buffs with one click. BuffBot scans each character's spellbook, lets you configure which buffs to cast, in what order, on which targets — then executes the entire sequence automatically across all party members in parallel.
 
@@ -29,7 +29,7 @@ Cast all your pre-battle buffs with one click. BuffBot scans each character's sp
 
 ## Requirements
 
-- **BG:EE**, **BG2:EE**, or **EET**
+- **BG:EE**, **BG2:EE**, **IWD:EE**, or **EET**
 - **[EEex](https://github.com/Bubb13/EEex)** v0.11.0-alpha or later, with LuaJIT active (v1 recommended)
 
 EEex v0.11 and v1 have full BuffBot feature parity. LuaJIT must be active before BuffBot's main component installs. You can enable it through EEex's LuaJIT / Experimental option, or install BuffBot's **EEex LuaJIT Support** helper first. The main component validates the actual loader configuration and DLLs, so LuaJIT activated externally by EEex is accepted without requiring ownership by BuffBot.
@@ -166,7 +166,7 @@ The following limitations remain:
 
 ## Testing & Bug Reports
 
-BuffBot includes a built-in test suite. In the in-game console (the BG:EE / BG2:EE console — toggle with Ctrl-Space when `CLUAConsole=1` is set in `baldur.ini`):
+BuffBot includes a built-in test suite. In the in-game console (the Enhanced Edition console — toggle with Ctrl-Space when `CLUAConsole=1` is set in `baldur.ini`):
 
 ```
 BfBot.Test.RunAll()         -- full test suite (600+ assertions)
@@ -179,7 +179,7 @@ Log files are written to the game directory: `buffbot_test.log`, `buffbot_exec.l
 For 5E Spellcasting reports, also run `BfBot.FiveE.Diagnose()` in the console and include `buffbot_5e.log` and `WeiDU.log`. See the [5E tester guide](docs/5e-spellcasting.md#reporting-a-problem).
 
 **Reporting bugs:** please open an issue at [GitHub Issues](https://github.com/Chrizhermann/bg-eeex-buffbot/issues) with:
-- Game version (BG:EE / BG2:EE / EET) and EEex version
+- Game version (BG:EE / BG2:EE / IWD:EE / EET) and EEex version
 - Steps to reproduce
 - Mod list (especially SCS, Spell Revisions, kit mods)
 - Output from `BfBot.Test.RunAll()` if relevant

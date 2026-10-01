@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added Icewind Dale: Enhanced Edition (IWD:EE) as a supported WeiDU target for both the LuaJIT helper and BuffBot main component.
+- Updated all installer languages and user-facing documentation to include IWD:EE.
+
+### Compatibility
+- Audited the IWD:EE + EEex 1.2.0 runtime surface used by BuffBot: Mage/Priest/Innate spell iterators, quick-button spell counts, portrait access, CBaldurChitin access, and WORLD_ACTIONBAR are available under the same APIs used by the existing BG:EE/BG2:EE code paths.
+- Added IWD:EE/Infinity UI++ presentation compatibility: BuffBot uses the native RGDBUTS3/RgUISkin button sheet when detected, inherits the IWD Trajan/RGFONT styles, and exposes a dedicated Icewind Dale color scheme while preserving the existing BG fallback.
+- The first IWD:EE integration build is intended for live in-game validation before upstream merge.
+
 ## v1.9.0 (2026-09-27)
 
 ### Stable release
